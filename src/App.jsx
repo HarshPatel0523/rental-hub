@@ -14,6 +14,11 @@ import CarsPage from "./components/CarsPage";
 import CarDetails from "./components/CarDetails";
 import BookingPage from "./components/BookingPage";
 import Dashboard from "./components/Dashboard";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import PrivateRoute from "./components/PrivateRoute";
+import AdminLogin from "./components/AdminLogin";
+import AddCar from "./components/AddCar";
 import Footer from "./components/Footer";
 
 function App() {
@@ -31,10 +36,16 @@ function App() {
             <Route path="/accessibility" element={<AccessibilityPage />} />
             <Route path="/terms" element={<TermsAndConditions />} />
             <Route path="/maintenance" element={<Maintenance />} />
-            <Route path="/cars" element={<CarsPage />} />
-            <Route path="/cars/:id" element={<CarDetails />} />
-            <Route path="/booking" element={<BookingPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route element={<PrivateRoute />}> 
+              <Route path="/cars" element={<CarsPage />} />
+              <Route path="/add-car" element={<AddCar />} />
+              <Route path="/cars/:id" element={<CarDetails />} />
+              <Route path="/booking" element={<BookingPage />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/register" element={<Register />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

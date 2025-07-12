@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 const BookingPage = () => {
   const [form, setForm] = useState({
@@ -14,9 +15,34 @@ const BookingPage = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Booking submitted! Our team will contact you at your Indian mobile number.');
+    try {
+      const payload = {
+        fullName: form.name,
+        email: form.email,
+        mobile: form.phone,
+        pickupDate: form.pickupDate,
+        returnDate: form.returnDate,
+        carModel: form.car,
+        pricePerDay: 0,
+      };
+      await axios.post('http://localhost:5002/api/v1/bookings', payload, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      alert('Booking submitted successfully!');
+      setForm({
+        name: '',
+        email: '',
+        phone: '',
+        pickupDate: '',
+        returnDate: '',
+        car: '',
+      });
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Failed to submit booking');
+    }
   };
 
   return (

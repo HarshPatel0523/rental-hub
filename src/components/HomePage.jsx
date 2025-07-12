@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const HomePage = () => {
     const [searchParams, setSearchParams] = useState({
@@ -8,29 +9,19 @@ const HomePage = () => {
         returnDate: '',
     });
 
-    const featuredCars = [
-        {
-            id: 1,
-            name: 'Maruti Suzuki Swift',
-            category: 'Hatchback',
-            price: 1200,
-            image: '/images/swift.jpeg',
-        },
-        {
-            id: 2,
-            name: 'Hyundai Creta',
-            category: 'SUV',
-            price: 2200,
-            image: '/images/creta.jpeg',
-        },
-        {
-            id: 3,
-            name: 'Tata Nexon EV',
-            category: 'Electric',
-            price: 2500,
-            image: '/images/nexon.jpeg',
-        },
-    ];
+    const [featuredCars, setFeaturedCars] = useState([]);
+
+    useEffect(() => {
+        const fetchCars = async () => {
+            try {
+                const res = await axios.get('http://localhost:5002/api/v1/cars');
+                setFeaturedCars(res.data.slice(0, 3));
+            } catch (err) {
+                setFeaturedCars([]);
+            }
+        };
+        fetchCars();
+    }, []);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -85,13 +76,13 @@ const HomePage = () => {
                 <h2 className="text-3xl font-bold text-center mb-12">Featured Cars</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {featuredCars.map((car) => (
-                        <div key={car.id} className="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300">
-                            <img src={car.image} alt={car.name} className="w-full h-48 object-cover" />
+                        <div key={car._id} className="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300">
+                            <img src={car.image} alt={car.brand ? `${car.brand} ${car.model}` : car.name} className="w-full h-48 object-cover" />
                             <div className="p-6">
-                                <h3 className="text-xl font-semibold mb-2">{car.name}</h3>
+                                <h3 className="text-xl font-semibold mb-2">{car.brand ? `${car.brand} ${car.model}` : car.name}</h3>
                                 <p className="text-gray-600 mb-4">{car.category}</p>
-                                <p className="text-blue-600 text-xl font-bold mb-4">₹{car.price}/day</p>
-                                <Link to={`/booking?car=${car.name}`} className="w-full block bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-center">
+                                <p className="text-blue-600 text-xl font-bold mb-4">₹{car.pricePerDay || car.price}/day</p>
+                                <Link to={`/booking?car=${car.name || car.model}`} className="w-full block bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-center">
                                     Book Now
                                 </Link>
                             </div>
